@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<LinePrinterConfig>
+  FormatVersion = 1.0
+  <Printers>    
+    
+    <PB50BlueTooth_80COL EntryName="Port1" DisplayName="PB50 Bluetooth Printer" InitSeq="0x00,0x00,0x00,0x00,0x1b,@,0x00,0x1b,0x77,0x21,0x1b,!,0x00"
+			  PrintableLines="0" DoubleWideFontSeq="0x1b,0x77,0x2B" NormalFontSeq="0x1b,0x77,0x6D,0x1b,!,0x00" CompressFontSeq="0x1b,0x77,0x42"
+			  BoldOnSeq="0x1b,!,0x10" BoldOffSeq="0x1b,!,0x00" GraphModeInitSeq="0x1b,B" GraphModeExitSeq="0x1b,E" GraphCompressedLinePrefix="G"
+			  GraphNoncompressedLinePrefix="U" GraphEmptyLinesPrefix="A" GraphXDots="832" GraphNumPins="1" GraphCharHeight="1" GraphCharWidth="1" />
+
+    <PB21_PB22Bt_40COL EntryName="Port1" DisplayName="PB21, PB22 Bt Printer"
+        InitSeq="0x00,0x00,0x00,0x00,0x1b,@,0x00,0x1b,0x77,0x21,0x1b,!,0x00"
+        PrintableLines="0" DoubleWideFontSeq="0x1b,!,0x20" NormalFontSeq="0x1b,0x77,0x21,0x1b,!,0x00"
+        CompressFontSeq="0x1b,0x77,0x42" BoldOnSeq="0x1b,!,0x10" BoldOffSeq="0x1b,!,0x00"
+        GraphModeInitSeq="0x1b,B" GraphModeExitSeq="0x1b,E" GraphCompressedLinePrefix="G"
+        GraphNoncompressedLinePrefix="U" GraphEmptyLinesPrefix="A" GraphNumPins="1"
+        GraphXDots="384" GraphCharHeight="16" GraphCharWidth="9" />
+    
+  </Printers>
+  <PrinterPorts>    
+    <Port1 PORT="COM6:" RTS="y" CTS="y">WPPORT</Port1>
+  </PrinterPorts>
+</LinePrinterConfig>

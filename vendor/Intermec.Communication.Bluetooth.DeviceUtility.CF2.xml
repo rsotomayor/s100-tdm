@@ -1,0 +1,588 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Intermec.Communication.Bluetooth.DeviceUtility.CF2</name>
+    </assembly>
+    <members>
+        <member name="T:Intermec.Communication.Bluetooth.DeviceUtility">
+            <summary>
+            The DeviceUtility class of Intermec.Communication.Bluetooth is used to select and
+            (in some cases) configure wireless devices that can be used by a computer. 
+            </summary>
+        </member>
+        <member name="M:Intermec.Communication.Bluetooth.DeviceUtility.#ctor">
+            <summary>
+            Default constructor for the DeviceUtility Class
+            </summary>
+        </member>
+        <member name="M:Intermec.Communication.Bluetooth.DeviceUtility.ControlPanel(System.String)">
+            <summary>
+            The PocketPC 2002 and 2003 deliverables will include a control panel applet. The utility program is 
+            a shell around this DLL so the screens and features of the control panel applet are identical to the utility program.
+            </summary>
+            <param name="szCmdLine">Command line parameters to pass to the control panel applet.
+            in the form &lt;XML-file&gt; [options]
+            </param>
+            <remarks>
+            Command Line usage.
+            <para></para><para></para>
+            XML-file	
+            <para></para>
+            Holds the device information, and any overrides of program literals. If not 
+            specified, the program uses PSWDM0C.XML in the folder where PSWDM0CCPL.DLL resides. The 
+            file is created if it does not exist.
+            <para></para><para></para>
+            Options:
+            <para></para><para></para><br></br>
+            -Configuration &lt;configuration name&gt;	
+            <para></para>
+            Specifies the configuration in the XML file to use. If this parameter is not specified, 
+            the program uses the configuration specified by the ActiveConfiguration element in the XML file.
+            <para></para><para></para>
+            -Select &lt;device type&gt; &lt;device sub-type&gt; &lt;device name&gt;
+            <para></para>
+            Sets up a port to use the specified device. Refer to the BtPort element in the XML 
+            file. The device type and sub-type must match values in the XML file, or specify 
+            empty strings (“”) if there are no device types or sub-types. If &lt;device name&gt; 
+            is an empty string (“”), the program uses the default device for the specified sub-type. 
+            <para></para><para></para>
+            -AutoSelect &lt;device type&gt; &lt;device sub-type&gt;
+            <para></para>
+            Finds the first available device within the sub-type and sets up a port to use the device. Refer to the BtPort element in the XML file.
+            <para></para><para></para>
+            -Resources &lt;resource filename.DLL&gt;
+            <para></para>
+            Causes the program to read its resource information from the specified resource-only satellite DLL, which allows some customization of the program screens. Refer to Usage Notes for more information.
+            <para></para><para></para><para></para>
+            Usage of this method requires the pswdm0ccpl.dll file to be in the devices search path.
+            When passing command line parameters a space is considered a command delimiter so the
+            full path and filename to the XML may need to be placed in quotes if there is a space in the path or filename.</remarks>
+            <returns>Void</returns>
+            <exception cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"></exception>
+            <seealso cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"/> 
+        </member>
+        <member name="M:Intermec.Communication.Bluetooth.DeviceUtility.AddDevice(System.String,System.String,System.String)">
+            <summary>
+            Adds a device to the XML file.  The Initialize method must be called before 
+            any other method, and Close should be called when the application is finished with the API.
+            </summary>
+            <param name="szDeviceType">Must match a device type in the XML file, or NULL or an empty string if there are no device types.</param>
+            <param name="szDeviceSubType">Must match a device sub-type in the XML file, or NULL or an empty string if the device type has no sub-types.</param>
+            <param name="szDeviceName">Name of the device to add.</param>
+            <remarks>Changes to the XML file are not written until SaveChanges is called.
+            If szDeviceName is a Bluetooth device address or was discovered in a previous call to DiscoverDevices, the property “DeviceAddress” 
+            is automatically set for the device. Refer to GetDeviceProperty. If “DeviceAddress” matches an existing device in the XML file, the existing device 
+            name is replaced by szDeviceName rather than adding a new device entry. </remarks>
+            <returns>Void</returns>
+            <exception cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"></exception>
+            <seealso cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"/> 
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Initialize(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.SaveChanges"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Close"/>
+        </member>
+        <member name="M:Intermec.Communication.Bluetooth.DeviceUtility.AutoSelectDevice(System.String,System.String)">
+            <summary>
+            Finds the first available device within a sub-type and sets up a port to use the device.
+            </summary>
+            <param name="szDeviceType">Must match a device type in the XML file.</param>
+            <param name="szDeviceSubType">Must match a device sub-type in the XML file, or NULL or an empty string if the device type has no sub-types.</param>
+            <remarks>Devices must be discoverable to qualify for selection. 
+            It may take up to 11 seconds for AutoSelectDevice to return. 
+            It is possible that another computer might connect to the device before the calling application, so the calling application may need to call 
+            AutoSelectDevice again or allow the user to manually make a selection.
+            AutoSelectDevice does not perform bonding. The calling application should have previously bonded with all devices of the specified device sub-type. Refer to BondWithDevice. 
+            </remarks>
+            <returns>Void</returns>
+            <exception cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"></exception>
+            <seealso cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"/> 
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.BondWithDevice(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Initialize(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Close"/>
+        </member>
+        <member name="M:Intermec.Communication.Bluetooth.DeviceUtility.BondWithDevice(System.String)">
+            <summary>
+            Attempts Bluetooth bonding to the specified device. 
+            </summary>
+            <param name="szDeviceName">Must match a device in the XML file.</param>
+            <remarks>Since bonding should be performed in a private area, the application should display a warning 
+            to the user before calling BondWithDevice. To avoid displaying the warning unnecessarily, call 
+            IsBondWithDeviceNeeded to determine if it is necessary to call BondWithDevice.
+            If security is disabled in the remote device and security is not strictly enabled in the XML file, 
+            BondWithDevice succeeds but a bond does not exist. If security is disabled in the remote device and 
+            security is strictly enabled in the XML file, BondWithDevice throws DeviceUtilityException with Windows error ERROR_OPERATION_ABORTED (995).
+            </remarks>
+            <returns>Void</returns>
+            <exception cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"></exception>
+            <seealso cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"/> 
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Initialize(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.IsBondWithDeviceNeeded(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Close"/>
+        </member>
+        <member name="M:Intermec.Communication.Bluetooth.DeviceUtility.CheckDevice(System.String)">
+            <summary>
+            Attempts a connection with a Bluetooth device.  This provides a simple “ping” test that can be used 
+            to verify that a device is in range and available.
+            </summary>
+            <param name="szDeviceName">Must match a device in the XML file.</param>
+            <remarks> CheckDevice does not perform bonding. The calling application 
+            should have previously bonded with the device. If the call to CheckDevice is unsuccessful
+            an exception will be thrown.  If no exception is thrown the check was successful.</remarks>
+            <returns>Void</returns>
+            <exception cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"></exception>
+            <seealso cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"/> 
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.BondWithDevice(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.IsBondWithDeviceNeeded(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Initialize(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Close"/>
+        </member>
+        <member name="M:Intermec.Communication.Bluetooth.DeviceUtility.Close">
+            <summary>
+            Releases resources used by the device utility. After calling this method, 
+            an application must call Initialize again before accessing any other method.
+            </summary>
+            <remarks></remarks>
+            <returns>Void</returns>
+            <exception cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"></exception>
+            <seealso cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"/> 
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Initialize(System.String)"/>
+        </member>
+        <member name="M:Intermec.Communication.Bluetooth.DeviceUtility.DiscoverDevices(System.String,System.String)">
+            <summary>
+            Discovers Bluetooth devices that are in range and discoverable. Use GetDiscoveredDevices to retrieve the list of devices.
+            </summary>
+            <param name="szDeviceType">If not NULL or an empty string, only discovered devices that match a Filter in the XML file for this device type are added to the list. If NULL or an empty string, szDeviceSubtype is ignored and all discovered devices are added to the list.</param>
+            <param name="szDeviceSubtype">If not NULL or an empty string, only discovered devices that match a Filter in the XML file for this device sub-type are added to the list.</param>
+            <returns>Void</returns>
+            <exception cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"></exception>
+            <seealso cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"/> 
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.GetDiscoveredDevices"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Initialize(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Close"/>
+        </member>
+        <member name="M:Intermec.Communication.Bluetooth.DeviceUtility.GetDefaultDevice(System.String,System.String)">
+            <summary>
+            Retrieves the default device from the XML file for the specified device type and sub-type from the XML file.  
+            </summary>
+            <param name="szDeviceType">Must match a device type in the XML file, or NULL or an empty string if there are no device types.</param>
+            <param name="szDeviceSubType">Must match a device sub-type in the XML file, or NULL or an empty string if the device type has no sub-types.</param>
+            <remarks></remarks>
+            <returns>A string indicating the default device.</returns>
+            <exception cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"></exception>
+            <seealso cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"/> 
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Initialize(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Close"/>
+        </member>
+        <member name="M:Intermec.Communication.Bluetooth.DeviceUtility.GetDevices(System.String,System.String)">
+            <summary>
+            Retrieves a list of device names from the XML file.
+            </summary>
+            <param name="szDeviceType">Must match a device type in the XML file, or NULL or an empty string to return all devices, in which case szDeviceSubtype is ignored.</param>
+            <param name="szDeviceSubtype">Must match a device sub-type in the XML file, or NULL or an empty string to return 
+            devices for all sub-types of szDeviceType. If a device is a member of multiple sub-types, it will be returned multiple times by GetDevices.</param>
+            <remarks></remarks>
+            <returns>An array of strings containing the devices for the device type and subtype passed in.</returns>
+            <exception cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"></exception>
+            <seealso cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"/> 
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.GetDeviceTypes"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.GetDeviceSubtypes(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Initialize(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Close"/>
+        </member>
+        <member name="M:Intermec.Communication.Bluetooth.DeviceUtility.GetDeviceProperty(System.String,Intermec.Communication.Bluetooth.DeviceUtility.PropertyName)">
+            <summary>
+            Retrieves a property value for a device, from the local cache. To refresh the local cache from the device, use ReadDeviceProperties.
+            </summary>
+            <param name="szDeviceName">Must match a device in the XML file.</param>
+            <param name="propName">A <seealso cref="T:Intermec.Communication.Bluetooth.DeviceUtility.PropertyName"> DeviceUtility.PropertyName</seealso> value</param>
+            <remarks>For security reasons, the actual “Passkey” and “NewPasskey” values are not returned. If a “Passkey” or “NewPasskey” has been set for a device, GetDeviceProperty does not throw an exception but returns an empty string in szPropertyValue.</remarks>
+            <returns>A string with the value for the property specified.</returns>
+            <exception cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"></exception>
+            <seealso cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"/> 
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.ReadDeviceProperties(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.SetDeviceProperty(System.String,Intermec.Communication.Bluetooth.DeviceUtility.PropertyName,System.String)"/>
+            <seealso cref="T:Intermec.Communication.Bluetooth.DeviceUtility.PropertyName"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Initialize(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Close"/>
+        </member>
+        <member name="M:Intermec.Communication.Bluetooth.DeviceUtility.GetDeviceSubtypes(System.String)">
+            <summary>
+            Retrieves a list of device sub-types from the XML file.
+            </summary>
+            <param name="szDeviceType">Must match a device type in the XML file.</param>
+            <remarks></remarks>
+            <returns>An array of strings containing the device subtypes for the device type passed in.</returns>
+            <exception cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"></exception>
+            <seealso cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"/> 
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.GetDeviceTypes"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.GetDevices(System.String,System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Initialize(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Close"/>
+        </member>
+        <member name="M:Intermec.Communication.Bluetooth.DeviceUtility.GetDeviceTypes">
+            <summary>
+            Retrieves the list of device types from the XML file.
+            </summary>
+            <remarks></remarks>
+            <returns>An array of strings containing the device types</returns>
+            <exception cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"></exception>
+            <seealso cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"/> 
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.GetDeviceTypes"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.GetDeviceSubtypes(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Initialize(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Close"/>
+        </member>
+        <member name="M:Intermec.Communication.Bluetooth.DeviceUtility.GetDiscoveredDevices">
+            <summary>
+            Retrieves the list of devices discovered by DiscoverDevices.
+            </summary>
+            <remarks>For Bluetooth devices, the returned name is the Bluetooth device name followed by the device address in parentheses. If the Bluetooth device name can not be retrieved, the returned name is just the device address in parentheses. If the application calls AddDevice for this device, and later calls DiscoverDevices and the Bluetooth device name is successfully retrieved, the device name returned by GetDevices is updated. Because of this, it is recommended that applications refresh the entire list displayed by the user interface after calling DiscoverDevices; otherwise, a device might be displayed twice, once with the old name and once with the new name.</remarks>
+            <returns>An array of strings containing the discovered Devices</returns>
+            <exception cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"></exception>
+            <seealso cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"/> 
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.DiscoverDevices(System.String,System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Initialize(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Close"/>
+        </member>
+        <member name="M:Intermec.Communication.Bluetooth.DeviceUtility.Initialize(System.String)">
+            <summary>
+            This method must be called before any of the other methods.
+            </summary>
+            <param name="szXmlFileName">The name of the XML file from which to read configuration information. This file is created if it does not exist.</param>
+            <remarks></remarks>
+            <returns>Void</returns>
+            <exception cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"></exception>
+            <seealso cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"/> 
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Close"/>
+        </member>
+        <member name="M:Intermec.Communication.Bluetooth.DeviceUtility.IsBondWithDeviceNeeded(System.String)">
+            <summary>
+            Determines whether or not the application needs to call BondWithDevice for a device. This allows the application 
+            to display a warning before calling BondWithDevice, since bonding should be performed in a private area.
+            </summary>
+            <param name="szDeviceName">Must match a device in the XML file.</param>
+            <remarks>If the remote device loses its bonding information for some reason, IsBondWithDeviceNeeded will continue to return 
+            FALSE until the computer next attempts a connection to the device, either with CheckDevice, TestDevice or accessing the 
+            Bluetooth port. For a more user friendly solution, an application can check for this situation and automatically 
+            retry rather than displaying a connection error. If the return value of IsBondWithDeviceNeeded is FALSE before attempting a 
+            connection but TRUE afterward, the application can call BondWithDevice then attempt the connection again.
+            When BondWithDevice has succeeded for a device that has security disabled, subsequent calls to IsBondWithDeviceNeeded return 
+            FALSE. If device security is later enabled outside of this class, IsBondWithDeviceNeeded will continue to return FALSE, but connections to the device 
+            will fail. Because of this, an application may choose to allow the user to perform bonding when a connection fails, even though 
+            IsBondWithDeviceNeeded returns FALSE </remarks>
+            <returns>True if BondWithDevice Needs to be called or false if BondWithDevice does not need to be called.</returns>
+            <exception cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"></exception>
+            <seealso cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"/> 
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Initialize(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.BondWithDevice(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.CheckDevice(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.TestDevice(System.String,System.String,System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Close"/>
+        </member>
+        <member name="M:Intermec.Communication.Bluetooth.DeviceUtility.ReadDeviceProperties(System.String)">
+            <summary>
+            Queries a device for its properties. 
+            </summary>
+            <param name="szDeviceName">Must match a device in the XML file.</param>
+            <remarks>Use GetDeviceProperty to retrieve property values. Device properties are written to the XML file when SaveChanges is called. This method utilizes the default Bluetooth virtual COM port. Refer to the BtPort element in the XML file.</remarks>
+            <returns>Void</returns>
+            <exception cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"></exception>
+            <seealso cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"/> 
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Initialize(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.GetDeviceProperty(System.String,Intermec.Communication.Bluetooth.DeviceUtility.PropertyName)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.SetDeviceProperty(System.String,Intermec.Communication.Bluetooth.DeviceUtility.PropertyName,System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.SaveChanges"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Close"/>
+        </member>
+        <member name="M:Intermec.Communication.Bluetooth.DeviceUtility.RemoveDevice(System.String,System.String,System.String)">
+            <summary>
+            Removes a device from the XML file.
+            </summary>
+            <param name="szDeviceType">If NULL or an empty string, szDeviceSubtype is ignored and the device is removed from the XML file 
+            entirely. Otherwise, must match a device type in the XML file, and the device is just removed from the list of devices for this device type.</param>
+            <param name="szDeviceSubType">If NULL or an empty string, the device is removed for all sub-types in the device type. Otherwise, must match a device sub-type in the XML file, and the device is just removed from the list of devices for this device sub-type.</param>
+            <param name="szDeviceName">Must match a device in the XML file.</param>
+            <remarks>Changes to the XML file are not written until SaveChanges is called.</remarks>
+            <returns>Void</returns>
+            <exception cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"></exception>
+            <seealso cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"/> 
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Initialize(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.SaveChanges"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Close"/>
+        </member>
+        <member name="M:Intermec.Communication.Bluetooth.DeviceUtility.SaveChanges">
+            <summary>
+            Writes changes back to the XML file.  If no changes have been made, this method does nothing.
+            </summary>
+            <remarks></remarks>
+            <returns>Void</returns>
+            <exception cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"></exception>
+            <seealso cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"/> 
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Initialize(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.AddDevice(System.String,System.String,System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.ReadDeviceProperties(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.RemoveDevice(System.String,System.String,System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.SendDeviceProperties(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.SetDefaultDevice(System.String,System.String,System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.SetDeviceProperty(System.String,Intermec.Communication.Bluetooth.DeviceUtility.PropertyName,System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Close"/>
+        </member>
+        <member name="M:Intermec.Communication.Bluetooth.DeviceUtility.SendDeviceProperties(System.String)">
+            <summary>
+            Updates a device with the properties held in the local cache.
+            </summary>
+            <param name="szDeviceName">Must match a device in the XML file.</param>
+            <remarks> This method utilizes the default Bluetooth virtual COM port. Refer to the BtPort element in the XML file.
+            Property changes are written to the XML file when SaveChanges is called.
+            If the property “NewDeviceName” was set, it is removed and the device name stored in the XML file 
+            is updated, and the new device name must be used in future calls to the API. 
+            If the property “NewPasskey” was set, it is removed and the property “Passkey” is updated, and any 
+            existing bond with the device is invalidated. Before attempting to use the device again, the application 
+            should call IsBondWithDeviceNeeded and then BondWithDevice if needed.</remarks>
+            <returns>Void</returns>
+            <exception cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"></exception>
+            <seealso cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"/> 
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Initialize(System.String)"/>
+            <seealso cref="T:Intermec.Communication.Bluetooth.DeviceUtility.PropertyName"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.IsBondWithDeviceNeeded(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.BondWithDevice(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.SaveChanges"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Close"/>
+        </member>
+        <member name="M:Intermec.Communication.Bluetooth.DeviceUtility.SetActiveDevice(System.String,System.String,System.String)">
+            <summary>
+            Sets up a port to use the specified device. Refer to the BtPort element in the XML file. If the device is not a Bluetooth device this method does nothing. 
+            </summary>
+            <param name="szDeviceType">Must match a device type in the XML file, or NULL or an empty string if there are no device types.</param>
+            <param name="szDeviceSubType">Must match a device sub-type in the XML file, or NULL or an empty string if the device type has no sub-types.</param>
+            <param name="szDeviceName">If this parameter is NULL or an empty string, the default device for the device type and sub-type is used. 
+            Otherwise, must match a device in the XML file.</param>
+            <remarks>The calling application must perform bonding if necessary. Refer to BondWithDevice.
+            Bluetooth virtual COM ports are not restored if the computer is rebooted; the application must call SetActiveDevice again.</remarks>
+            <returns>Void</returns>
+            <exception cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"></exception>
+            <seealso cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"/> 
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Initialize(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.BondWithDevice(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.IsBondWithDeviceNeeded(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Close"/>
+        </member>
+        <member name="M:Intermec.Communication.Bluetooth.DeviceUtility.SetDefaultDevice(System.String,System.String,System.String)">
+            <summary>
+            Sets a device as the default in the XML file. 
+            </summary>
+            <param name="szDeviceType">Must match a device type in the XML file, or NULL or an empty string if there are no device types.</param>
+            <param name="szDeviceSubType">Must match a device sub-type in the XML file, or NULL or an empty string if the device type has no sub-types.</param>
+            <param name="szDeviceName">Must match a device in the XML file.</param>
+            <remarks>Use SetActiveDevice to set up the default for use.
+            Changes to the XML file are not written until SaveChanges is called.
+            If the XML element DefaultDevice for the specified device type and sub-type includes discoverable=”N”, and the device has a Configurable XML element, SetDefaultDevice attempts to disable the discoverable state of the device using SendDeviceProperties. SendDeviceProperties may update other properties as well, if they are specified in the XML file or SetDeviceProperty has been called. If SendDeviceProperties fails, SetDefaultDevice throws an exception but still sets the device as the default; if you want to ignore this exception, you can use GetDefaultDevice to determine if the default was changed. SetDefaultDevice does not attempt to restore the discoverable state of the previous default because it is likely that the device is not available.</remarks>
+            <returns>Void</returns>
+            <exception cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"></exception>
+            <seealso cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"/> 
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Initialize(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.SetActiveDevice(System.String,System.String,System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.SaveChanges"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.SendDeviceProperties(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.GetDefaultDevice(System.String,System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.SetDeviceProperty(System.String,Intermec.Communication.Bluetooth.DeviceUtility.PropertyName,System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Close"/>
+        </member>
+        <member name="M:Intermec.Communication.Bluetooth.DeviceUtility.SetDeviceProperty(System.String,Intermec.Communication.Bluetooth.DeviceUtility.PropertyName,System.String)">
+            <summary>
+            Sets a property value for a device in the local cache. Use SendDeviceProperties to update the device. 
+            </summary>
+            <param name="szDeviceName">Must match a device in the XML file.</param>
+            <param name="propName">A DeviceUtility.PropertyName value</param>
+            <param name="szPropertyValue">The new value to set.</param>
+            <remarks>For Bluetooth devices, the value for “NewDeviceName” should not include the device address 
+            in parentheses. The device address gets appended to Bluetooth device names stored in the XML file 
+            to help avoid duplicate device names, but it is not part of the name stored in the device itself.
+            Property changes are written to the XML file when SaveChanges is called. </remarks>
+            <returns>Void</returns>
+            <exception cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"></exception>
+            <seealso cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"/> 
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Initialize(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.SendDeviceProperties(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.GetDeviceProperty(System.String,Intermec.Communication.Bluetooth.DeviceUtility.PropertyName)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.SaveChanges"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Close"/>
+        </member>
+        <member name="M:Intermec.Communication.Bluetooth.DeviceUtility.TestDevice(System.String,System.String,System.String)">
+            <summary>
+            Performs a test of a Bluetooth device, using test information from the XML file if specified. 
+            </summary>
+            <param name="szDeviceType">Must match a device type in the XML file, or NULL or an empty string if there are no device types.</param>
+            <param name="szDeviceSubType">Must match a device sub-type in the XML file, or NULL or an empty string if the device type has no sub-types.</param>
+            <param name="szDeviceName">Must match a device in the XML file.</param>
+            <remarks>TestDevice does not perform bonding. The calling application should have previously bonded with the device.  
+            If the test fails an exception will be thrown.  If no exception was thrown the test was successful.
+            If the BtPort XML element for this device type and sub-type is blank, this method utilizes the default Bluetooth virtual COM port. 
+            If the BtPort XML element for this device is a Bluetooth virtual COM port, and the XML file does not contain a Test element for the device type, this method is functionally equivalent to CheckDevice.
+            If the BtPort XML element for this device is BtScannerx, this method uses the IBarCodeReader interface to flash the good data LED of the scanner for five seconds. Refer to the Intermec Developer’s Library for more information about the IBarCodeReader interface. 
+            </remarks>
+            <returns>void</returns>
+            <exception cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"></exception>
+            <seealso cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"/> 
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Initialize(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.CheckDevice(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.IsBondWithDeviceNeeded(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.BondWithDevice(System.String)"/>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.Close"/>
+        </member>
+        <member name="M:Intermec.Communication.Bluetooth.DeviceUtility.ErrorHandler(System.Int32,System.Exception,Intermec.Communication.Bluetooth.DeviceUtilityException.MethodName)">
+            <summary>
+            This private method is used to handle errorcodes returned by the native API and Exceptions
+            that might be thrown while P/Invoking.  If an error code or exception is encountered
+            a DeviceUtilityException is thrown.
+            </summary>
+            <param name="errorCode">The Error code that was returned by the call to native code or 0 if no error code was returned.</param>
+            <param name="ex">The exception that was thrown or null if no exception was thrown.</param>
+            <param name="method">A DeviceUtilityException.MethodName that indicate which method the error or exception occurred in.</param>
+            <remarks></remarks>
+            <returns>Void</returns>
+            <seealso cref="T:Intermec.Communication.Bluetooth.DeviceUtilityException"/> 
+        </member>
+        <member name="T:Intermec.Communication.Bluetooth.DeviceUtility.PropertyName">
+            <summary>
+            The PropertyName enumeration is used to list all the available property
+            names that can be passed to methods such as GetDeviceProperty and SetDeviceProperty.
+            </summary>
+            <remarks>
+            </remarks>
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.GetDeviceProperty(System.String,Intermec.Communication.Bluetooth.DeviceUtility.PropertyName)"/> 
+            <seealso cref="M:Intermec.Communication.Bluetooth.DeviceUtility.SetDeviceProperty(System.String,Intermec.Communication.Bluetooth.DeviceUtility.PropertyName,System.String)"/>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtility.PropertyName.Protocol">
+            <summary>Protocol property</summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtility.PropertyName.DeviceAddress">
+            <summary>DeviceAddress property</summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtility.PropertyName.Discoverable">
+            <summary>Discoverable property</summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtility.PropertyName.Bondable">
+            <summary>Bondable property</summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtility.PropertyName.Authentication">
+            <summary>Authentication property</summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtility.PropertyName.Encryption">
+            <summary>Encryption property</summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtility.PropertyName.Passkey">
+            <summary>Passkey property</summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtility.PropertyName.NewPasskey">
+            <summary>NewPasskey property</summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtility.PropertyName.NewDeviceName">
+            <summary>NewDeviceName property</summary>
+        </member>
+        <member name="T:Intermec.Communication.Bluetooth.DeviceUtilityException">
+            <summary>
+            An exception that is thrown when an error is encountered in the DeviceUtility class.
+            </summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtilityException.ErrorCode">
+            <summary>The ErrorCode that caused the exception to be thrown.  This may be a Windows
+            error code or an error code returned by the Bluetooth stack. 0 if no error was returned.</summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtilityException.Method">
+            <summary>A MethodName enumeration that indicates which method the exception occurred in.</summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtilityException.InnerException">
+            <summary>InnerException contains an unexpected System.Exception that was thrown.  This value
+            may be null if no System.Exception was thrown.</summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtilityException.Message">
+            <summary>The readable message that indicates to the user the exception that occurred. </summary>
+        </member>
+        <member name="M:Intermec.Communication.Bluetooth.DeviceUtilityException.#ctor(System.Int32,System.Exception,Intermec.Communication.Bluetooth.DeviceUtilityException.MethodName)">
+            <summary>
+            An exception that is thrown by the DeviceUtility class
+            </summary>
+            <param name="errorCode">A value that indicates a windows error code or stack error code that was returned by the unmanaged DLL.  
+            This value may be 0 to indicate that no error was encountered in the unmanaged DLL.</param>
+            <param name="method">A DeviceUtilityException MethodName enumeration that indicates which method the exception occurred in.</param>
+            <param name="innerException">An instance of Exception that describes the error that caused the current DeviceUtilityException.  
+            When an exception X is thrown as a direct result of a previous exception Y, the 
+            InnerException property of X should contain a reference to Y.</param>
+        </member>
+        <member name="T:Intermec.Communication.Bluetooth.DeviceUtilityException.MethodName">
+            <summary>
+            An enumeration of all Methods that a DeviceUtilityException can be 
+            thrown from.
+            </summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtilityException.MethodName.ControlPanel">
+            <summary> ControlPanel </summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtilityException.MethodName.AddDevice">
+            <summary> AddDevice </summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtilityException.MethodName.AutoSelectDevice">
+            <summary> AutoSelectDevice </summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtilityException.MethodName.BondWithDevice">
+            <summary> BondWithDevice </summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtilityException.MethodName.CheckDevice">
+            <summary> CheckDevice </summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtilityException.MethodName.Close">
+            <summary> Close </summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtilityException.MethodName.DiscoverDevices">
+            <summary> DiscoverDevices </summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtilityException.MethodName.GetDefaultDevice">
+            <summary> GetDefaultDevice </summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtilityException.MethodName.GetDevices">
+            <summary> GetDevices </summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtilityException.MethodName.GetDeviceProperty">
+            <summary> GetDeviceProperty </summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtilityException.MethodName.GetDeviceSubtypes">
+            <summary> GetDeviceSubtypes </summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtilityException.MethodName.GetDeviceTypes">
+            <summary> GetDeviceTypes </summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtilityException.MethodName.GetDiscoveredDevices">
+            <summary> GetDiscoveredDevices </summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtilityException.MethodName.Initialize">
+            <summary> Initialize </summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtilityException.MethodName.IsBondWithDeviceNeeded">
+            <summary> IsBondWithDeviceNeeded </summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtilityException.MethodName.ReadDeviceProperties">
+            <summary> ReadDeviceProperties </summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtilityException.MethodName.RemoveDevice">
+            <summary> RemoveDevice </summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtilityException.MethodName.SaveChanges">
+            <summary> SaveChanges </summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtilityException.MethodName.SendDeviceProperties">
+            <summary> SendDeviceProperties </summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtilityException.MethodName.SetActiveDevice">
+            <summary> SetActiveDevice </summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtilityException.MethodName.SetDefaultDevice">
+            <summary> SetDefaultDevice </summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtilityException.MethodName.SetDeviceProperty">
+            <summary> SetDeviceProperty </summary>
+        </member>
+        <member name="F:Intermec.Communication.Bluetooth.DeviceUtilityException.MethodName.TestDevice">
+            <summary> TestDevice </summary>
+        </member>
+    </members>
+</doc>
