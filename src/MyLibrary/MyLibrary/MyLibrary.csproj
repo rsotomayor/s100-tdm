@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{08CB25E1-DFFC-4813-A382-9DB62BF9F549}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -50,8 +50,14 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Intermec.Communication.Bluetooth.DeviceUtility.CF2, Version=3.30.1.0, Culture=neutral, PublicKeyToken=acd169b56b6148ba, processorArchitecture=MSIL" />
-    <Reference Include="Intermec.Print.LinePrinter.CF2, Version=2.10.3805.15577, Culture=neutral, PublicKeyToken=acd169b56b6148ba, processorArchitecture=MSIL" />
+    <Reference Include="Intermec.Communication.Bluetooth.DeviceUtility.CF2, Version=3.30.1.0, Culture=neutral, PublicKeyToken=acd169b56b6148ba, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\vendor\Intermec.Communication.Bluetooth.DeviceUtility.CF2.dll</HintPath>
+    </Reference>
+    <Reference Include="Intermec.Print.LinePrinter.CF2, Version=2.10.3805.15577, Culture=neutral, PublicKeyToken=acd169b56b6148ba, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\vendor\Intermec.Print.LinePrinter.CF2.dll</HintPath>
+    </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
