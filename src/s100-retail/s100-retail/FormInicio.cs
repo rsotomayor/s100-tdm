@@ -18,7 +18,7 @@ namespace s100_retail
 {
     public partial class FormInicio : Form
     {
-        public String version_g = "1.2.7";
+        public String version_g = "1.2.8";
 
         delegate void SetGPSPositionCallback(String message_p);
 
@@ -295,15 +295,18 @@ namespace s100_retail
             MemoryStatus.GetAvailableMemory(out aTotalMem, out anUsedMem, out aFreeMem);
 
             String dummyText;
-            dummyText  = "Memoria \n";
-            dummyText += "Total :" + aTotalMem.ToString("F4",CultureInfo.CreateSpecificCulture("es-MX")) + "\n";
+            dummyText  = "Memoria Total :" + aTotalMem.ToString("F4",CultureInfo.CreateSpecificCulture("es-MX")) + "\n";
             dummyText += "Usada :" + anUsedMem.ToString("F2", CultureInfo.CreateSpecificCulture("es-MX"))+ " " ;
             dummyText += "Libre :" + aFreeMem.ToString("F2", CultureInfo.CreateSpecificCulture("es-MX")) + "\n";
             String IMEI;
+            String WLANMAC;
 
             IMEI = PhoneInfo.GetIMEI();
- 
+
+            WLANMAC = MyGlobal.GetMacAddress();
+
             dummyText += "IMEI: " + IMEI + "\n";
+            dummyText += "WLAN: " + WLANMAC + "\n";
 
             labelRecursos.Text = dummyText;
             String latitud, longitud, velocidad, altura;
@@ -330,9 +333,10 @@ namespace s100_retail
                   return;
             }
 
-            String IMEI;
+            String IMEI,WLANMAC;
 
             IMEI = PhoneInfo.GetIMEI();
+            WLANMAC = MyGlobal.GetMacAddress();
 
             String idSoftware = "s100-retail";
             String resultado;
@@ -346,8 +350,8 @@ namespace s100_retail
             {
                 nvc.Add("wsname", "getDesActivacion");
             }
-
-            nvc.Add("iddispositivo", IMEI);
+            nvc.Add("iddispositivo", WLANMAC);
+            nvc.Add("imei", IMEI);
             nvc.Add("idsoftware", idSoftware);
             nvc.Add("nombre", textBoxNombre.Text);
             nvc.Add("organizacion", textBoxOrganizacion.Text);
@@ -584,5 +588,6 @@ namespace s100_retail
             FormConsultaTransacciones myFormTransacciones_a = new FormConsultaTransacciones();
             myFormTransacciones_a.ShowDialog();
         }
+
     }
 }

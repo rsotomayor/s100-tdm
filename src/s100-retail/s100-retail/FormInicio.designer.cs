@@ -202,6 +202,7 @@ namespace s100_retail
             this.tabPageSesion.Name = "tabPageSesion";
             this.tabPageSesion.Size = new System.Drawing.Size(240, 223);
             this.tabPageSesion.Text = "Sesión";
+
             // 
             // labelSincronizacion
             // 
