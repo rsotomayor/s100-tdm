@@ -18,7 +18,7 @@ namespace s100_retail
 {
     public partial class FormInicio : Form
     {
-        public String version_g = "1.2.8";
+        public String version_g = "1.2.9";
 
         delegate void SetGPSPositionCallback(String message_p);
 
